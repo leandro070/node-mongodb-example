@@ -1,12 +1,7 @@
 import User from "../models/users";
 
 function UserRepository() {
-    function create({ name, password, email }) {
-        const user = new User({
-            email,
-            password,
-            name,
-        })
+    function create(user) {
         
         return new Promise((res, rej) => {
             user.save((err, userDB) => {

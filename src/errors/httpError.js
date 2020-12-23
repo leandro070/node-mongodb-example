@@ -1,15 +1,20 @@
 export default class HTTPError extends Error {
-    constructor(code, message) {
+    constructor(code, message, data) {
         super(message);
-        this.code = code;
-        this.message = message;
+        this._code = code;
+        this._message = message;
+        this._body = data;
     }
 
     getCode() {
-        return this.code;
+        return this._code;
     }
 
     getMessage() {
-        return this.message
+        return this._message;
+    }
+
+    getBody() {
+        return this._body;
     }
 }
