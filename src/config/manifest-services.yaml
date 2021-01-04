@@ -1,0 +1,19 @@
+# /manifest-services.yml
+services:
+  infrastructure.mongodb:
+    class: '../services/MongoManager'
+    calls: [{ method: 'run' }]
+
+  repository.user:
+    class: '../repository/UserRepository'
+    arguments: ['@infrastructure.mongodb']
+      
+  
+  service.auth:
+    class: '../services/AuthService'
+    arguments: ['@repository.user']
+
+  service.user:
+    class: '../services/UserService'
+    arguments: ['@repository.user']
+  
