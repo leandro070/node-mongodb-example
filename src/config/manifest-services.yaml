@@ -4,16 +4,24 @@ services:
     class: '../services/MongoManager'
     calls: [{ method: 'run' }]
 
+  # repositorios
   repository.user:
     class: '../repository/UserRepository'
     arguments: ['@infrastructure.mongodb']
-      
-  
-  service.auth:
-    class: '../services/AuthService'
+        
+  # servicios
+  service.user-authenticator:
+    class: '../services/UserAuthenticator'
     arguments: ['@repository.user']
 
-  service.user:
-    class: '../services/UserService'
+  service.user-creator:
+    class: '../services/UserCreator'
     arguments: ['@repository.user']
   
+  service.user-data-updater:
+    class: '../services/UserDataUpdater'
+    arguments: ['@repository.user']
+
+  service.user-password-updater:
+    class: '../services/UserPasswordUpdater'
+    arguments: ['@repository.user']

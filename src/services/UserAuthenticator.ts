@@ -4,15 +4,16 @@ import UserPasswordInvalid from "../errors/UserPasswordInvalid";
 import { comparePassword } from "../utils/password";
 
 
-class AuthService {
+class UserAuthenticator {
     private _userRepository: UserRepository;
 
     constructor(userRepository: UserRepository) {
         this._userRepository = userRepository;
     }
 
-    public async validateUserAndPassword({ email, password }) {
-        const user = await this._userRepository.findBy({ email })[0];
+    public async execute({ email, password }) {
+        const user = (await this._userRepository.findBy({ email }))[0];
+
         if (!user) {
             throw new UserPasswordInvalid();
         }
@@ -22,10 +23,13 @@ class AuthService {
             throw new UserPasswordInvalid();
         }
 
-        return user;
+        return {
+            user,
+            token: this.generateJWT(user),
+        };
     }
 
-    public generateJWT({ email, name, state }) {
+    private generateJWT({ email, name, state }) {
         const token = jwt.sign({
             email, name, state
         }, process.env.JWT_SECRET || "", { expiresIn: process.env.JWT_EXPIRY,  });
@@ -37,4 +41,4 @@ class AuthService {
     }
 }
 
-export default AuthService;
+export default UserAuthenticator;

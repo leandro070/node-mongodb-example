@@ -17,6 +17,7 @@ class AuthMiddleware {
                 }
 
                 req.user = user;
+
                 next();
             });
 

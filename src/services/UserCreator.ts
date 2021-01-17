@@ -3,15 +3,15 @@ import { hashPassword } from "../utils/password";
 import { IUser } from "../models/users";
 import UserRepository from "../repository/UserRepository";
 
-class UserService {
+class UserCreator {
     private _userRepository: UserRepository;
 
     constructor(userRepository: UserRepository) {
         this._userRepository = userRepository;
     }
 
-    async createUser({ name, password, email }) {
-        const userExist = await this._userRepository.findBy({ email });
+    async execute({ name, password, email }) {
+        const userExist = await this._userRepository.findBy({ email })[0];
 
         if (userExist) {
             throw new UserAlreadyExist();
@@ -19,17 +19,10 @@ class UserService {
         const hashed = await hashPassword(password);
         const user = { name, password: hashed, email } as IUser;
 
-        const newUser = this._userRepository.create(user);
+        const newUser = await this._userRepository.create(user);
+
         return newUser;
-    }
-
-    updatePassword(password: string) {
-
-    }
-
-    updateUserData(user) {
-
     }
 }
 
-export default UserService;
+export default UserCreator;

@@ -1,4 +1,4 @@
-import { Collection } from "mongodb";
+import { Collection, ObjectId } from "mongodb";
 import MongoManager from "../services/MongoManager";
 import { IRead } from "./interfaces/IRead";
 import { IWrite } from "./interfaces/IWrite";
@@ -18,19 +18,19 @@ export abstract class BaseRepository<T> implements IWrite<T>, IRead<T> {
         return !!result.result.ok;
     }
 
-    async update(id: string, item: T): Promise<boolean> {
-        const result = await this._collection.updateOne({ id }, { item });
+    async update(id: ObjectId, item: T): Promise<boolean> {        
+        const result = await this._collection.updateOne({ _id: id }, { $set: item }, { upsert: true });
 
         return !!result.result.ok;
     }
 
-    async softDelete(id: string): Promise<boolean> {
+    async softDelete(id: ObjectId): Promise<boolean> {
         const result = await this._collection.updateOne({ id }, { "is_deleted": true });
 
         return !!result.result.ok;
     }
 
-    async delete(id: string): Promise<boolean> {
+    async delete(id: ObjectId): Promise<boolean> {
         const result = await this._collection.deleteOne({ id });
 
         return !!result.result.ok;
@@ -48,7 +48,7 @@ export abstract class BaseRepository<T> implements IWrite<T>, IRead<T> {
         return result;
     }
 
-    async findOne(id: string): Promise<T> {
+    async findOne(id: ObjectId): Promise<T> {
 
         const result = await this._collection.findOne<T>({ "_id": id });
 

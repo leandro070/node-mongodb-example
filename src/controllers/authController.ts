@@ -1,13 +1,9 @@
-import AuthService from "../services/AuthService";
 import * as yup from "yup";
 import HandlerSchemas from "../utils/handleSchemas";
+import UserAuthenticator from "../services/UserAuthenticator";
 
 class AuthController {
-    private _authService: AuthService;
-
-    constructor(authService: AuthService) {
-        this._authService = authService;
-    }
+    constructor(private _userAuthenticator: UserAuthenticator) {}
 
     async login(req, res, next) {
         const loginDTO = req.body;
@@ -20,18 +16,10 @@ class AuthController {
         try {
             const handlerSchemas = new HandlerSchemas();
             await handlerSchemas.validate(validationSchema, loginDTO);
-            const user = await this._authService.validateUserAndPassword(loginDTO);
-            const jwt = await this._authService.generateJWT(user);
 
-            res.status(200).json({
-                user: {
-                    role: user.role,
-                    state: user.state,
-                    name: user.name,
-                    email: user.email,
-                },
-                token: jwt
-            });
+            const auth = await this._userAuthenticator.execute(loginDTO);
+
+            res.status(200).json(auth);
         } catch (error) {
             next(error);
         }
