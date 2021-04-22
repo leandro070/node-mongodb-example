@@ -1,11 +1,10 @@
 import { Router } from "express";
+import { IServices } from "../app";
 import AuthController from "../controllers/authController";
-import { ContainerBuilder } from "node-dependency-injection";
 
-export default function (router: Router, container: ContainerBuilder) {
-    const userAuthenticator = container.get("service.user-authenticator");
+export default function (router: Router, services: IServices) {
 
-    const authController = new AuthController(userAuthenticator);
+    const authController = new AuthController(services);
 
     router.post("/login", authController.login.bind(authController));
 

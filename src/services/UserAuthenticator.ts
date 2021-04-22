@@ -1,18 +1,13 @@
 import * as jwt from "jsonwebtoken";
-import UserRepository from "../repository/UserRepository";
-import UserPasswordInvalid from "../errors/UserPasswordInvalid";
+import UserPasswordInvalid from "../errors/userPasswordInvalid";
 import { comparePassword } from "../utils/password";
-
+import { IUserRepository } from "../repository/interfaces/iUserRepository";
 
 class UserAuthenticator {
-    private _userRepository: UserRepository;
-
-    constructor(userRepository: UserRepository) {
-        this._userRepository = userRepository;
-    }
+    constructor(private readonly userRepository: IUserRepository) {}
 
     public async execute({ email, password }) {
-        const user = (await this._userRepository.findBy({ email }))[0];
+        const user = (await this.userRepository.findByEmail(email));
 
         if (!user) {
             throw new UserPasswordInvalid();

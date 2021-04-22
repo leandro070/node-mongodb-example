@@ -1,9 +1,9 @@
 import { AnyObjectSchema } from "yup";
 import yupToObject from "yup-to-object";
-import BadRequest from "../errors/BadRequest";
+import BadRequest from "../errors/badRequest";
 
 class SchemasValidator {
-    async validate(schema: AnyObjectSchema, data: unknown): Promise<void> {
+    static async validate(schema: AnyObjectSchema, data: unknown): Promise<void> {
         try {
             await schema.validate(data, { abortEarly: false });
         } catch (error) {

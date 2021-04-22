@@ -1,12 +1,12 @@
 
-import BadRequest from "../errors/BadRequest";
-import UserRepository from "../repository/UserRepository";
+import BadRequest from "../errors/badRequest";
+import { IUserRepository } from "../repository/interfaces/iUserRepository";
 
 class UserDataUpdater {
-    constructor(private _userRepository: UserRepository) {}
+    constructor(private _userRepository: IUserRepository) {}
 
     async execute(email, data) {
-        const user = (await this._userRepository.findBy({ email }))[0];
+        const user = (await this._userRepository.findByEmail( email ))[0];
         if (!user) {
             throw new BadRequest();
         }

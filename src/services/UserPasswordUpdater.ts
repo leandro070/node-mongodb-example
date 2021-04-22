@@ -1,15 +1,15 @@
 
-import BadRequest from "../errors/BadRequest";
+import BadRequest from "../errors/badRequest";
 import { IUser } from "../models/users";
-import UserRepository from "../repository/UserRepository";
+import { IUserRepository } from "../repository/interfaces/iUserRepository";
 import { comparePassword, hashPassword } from "../utils/password";
 
 class UserPasswordUpdater {
 
-    constructor(private _userRepository: UserRepository) {}
+    constructor(private _userRepository: IUserRepository) {}
 
     async execute(email: string, { password, oldPassword }) {
-        const user = (await this._userRepository.findBy({ email }))[0];
+        const user = (await this._userRepository.findByEmail(email));
         if (!user) {
             throw new BadRequest();
         }
@@ -21,7 +21,7 @@ class UserPasswordUpdater {
 
         const hashedPassword = await hashPassword(password);
 
-        const result = await this._userRepository.update(user._id, { password: hashedPassword } as IUser);
+        const result = await this._userRepository.update(user.id, { password: hashedPassword } as IUser);
 
         return result;
 

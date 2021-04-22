@@ -1,9 +1,9 @@
 import * as jwt from "jsonwebtoken";
-import Unauthorized from "../errors/Unauthorized";
+import Unauthorized from "../errors/unauthorized";
 import { handleError } from "../utils/handleErrors";
 
 class AuthMiddleware {
-    validateToken(req, res, next): void {
+    static validateToken(req, res, next): void {
         try {
             const authHeader = req.headers.authorization;
             if (!authHeader) {
@@ -22,7 +22,7 @@ class AuthMiddleware {
             });
 
         } catch (error) {
-            handleError(error, req, res, next);
+            handleError(error, req, res);
         }
     }
 }

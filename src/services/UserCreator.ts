@@ -1,17 +1,17 @@
-import UserAlreadyExist from "../errors/UserAlreadyExist";
+import UserAlreadyExist from "../errors/userAlreadyExist";
 import { hashPassword } from "../utils/password";
 import { IUser } from "../models/users";
-import UserRepository from "../repository/UserRepository";
+import { IUserRepository } from "../repository/interfaces/iUserRepository";
 
 class UserCreator {
-    private _userRepository: UserRepository;
+    private _userRepository: IUserRepository;
 
-    constructor(userRepository: UserRepository) {
+    constructor(userRepository: IUserRepository) {
         this._userRepository = userRepository;
     }
 
     async execute({ name, password, email }) {
-        const userExist = await this._userRepository.findBy({ email })[0];
+        const userExist = await this._userRepository.findByEmail( email )[0];
 
         if (userExist) {
             throw new UserAlreadyExist();

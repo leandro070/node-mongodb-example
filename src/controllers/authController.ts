@@ -1,11 +1,16 @@
 import * as yup from "yup";
 import HandlerSchemas from "../utils/handleSchemas";
 import UserAuthenticator from "../services/UserAuthenticator";
+import { IServices } from "../app";
 
 class AuthController {
-    constructor(private _userAuthenticator: UserAuthenticator) {}
+
+    constructor(private readonly services: IServices) {}
 
     async login(req, res, next) {
+
+        const useCase = new UserAuthenticator(this.services.userRepository);
+
         const loginDTO = req.body;
 
         const validationSchema = yup.object().shape({
@@ -14,10 +19,9 @@ class AuthController {
         });
 
         try {
-            const handlerSchemas = new HandlerSchemas();
-            await handlerSchemas.validate(validationSchema, loginDTO);
+            await HandlerSchemas.validate(validationSchema, loginDTO);
 
-            const auth = await this._userAuthenticator.execute(loginDTO);
+            const auth = await useCase.execute(loginDTO);
 
             res.status(200).json(auth);
         } catch (error) {

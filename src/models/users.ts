@@ -1,6 +1,5 @@
-import { MongoDocument } from "./mongoDocument";
-
-export interface IUser extends MongoDocument {
+export interface IUser {
+    id: number
     name: string;
     email: string;
     password: string;

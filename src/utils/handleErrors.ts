@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import HTTPError from "../errors/httpError";
 
-export function handleError(err: Error, req: Request, res: Response, next: NextFunction): Response<unknown> {
-    console.error(err["body"]);
+export function handleError(err: Error, _: Request, res: Response): Response<unknown> {
+
     if (err instanceof HTTPError) {
         return res.status(err.getCode()).json({
             status: "error",

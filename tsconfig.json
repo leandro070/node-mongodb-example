@@ -2,21 +2,16 @@
     "compilerOptions": {
         "module": "commonjs",
         "esModuleInterop": true,
-        "target": "es5",
-        "skipLibCheck": true,
-        "noImplicitAny": false,
+        "allowSyntheticDefaultImports": true,
+        "target": "es6",
         "moduleResolution": "node",
-        "sourceMap": false,
+        "sourceMap": true,
         "rootDir": ".",
-        "strict": true,
-        "noEmit": false,
-        "resolveJsonModule": true,
-        "noUnusedLocals": true,
         "outDir": "./dist",
-        "strictNullChecks":false
+        "typeRoots": ["node_modules/@types"],
     },
     "include": [
-        "src/**/**.ts"
+        "./src/**/*",
     ],
     "exclude": ["node_modules", "tests"]
 }
