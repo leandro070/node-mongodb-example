@@ -18,15 +18,11 @@ class AuthController {
             password: yup.string().required("Password is required"),
         });
 
-        try {
-            await HandlerSchemas.validate(validationSchema, loginDTO);
+        await HandlerSchemas.validate(validationSchema, loginDTO);
 
-            const auth = await useCase.execute(loginDTO);
+        const auth = await useCase.execute(loginDTO);
 
-            res.status(200).json(auth);
-        } catch (error) {
-            next(error);
-        }
+        res.status(200).json(auth);
     }
 }
 

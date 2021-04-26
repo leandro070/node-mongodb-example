@@ -17,6 +17,7 @@ export interface IServices {
 export class App {
   private readonly _app: Express;
   private readonly _services: IServices;
+  private _router: Router;
 
   constructor() {
     const dbRepository = new DbRepository();
@@ -27,16 +28,18 @@ export class App {
     };
 
     this._app = express();
-    const router = Router();
+    this._router = Router();
     this._app.use(express.json());
     this._app.use(morgan("dev"));
-    this._app.use("/auth", createAuthRouter(router, this._services));
-    this._app.use("/users", createUserRouter(router, this._services));
-    this._app.use(handleError);
   }
 
   get services(): IServices {
     return this._services;
+  }
+
+  setup() {
+    this._app.use("/auth", createAuthRouter(this._router, this._services));
+    this._app.use("/users", createUserRouter(this._router, this._services));
   }
 
   start() {

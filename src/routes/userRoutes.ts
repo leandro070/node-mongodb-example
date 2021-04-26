@@ -2,13 +2,14 @@ import { Router } from "express";
 import { IServices } from "../app";
 import UserController from "../controllers/userController";
 import AuthMiddleware from "../middlewares/authMiddleware";
+import { catchAsync } from "../utils/handleErrors";
 
-export default function(router: Router, services: IServices) {    
+export default function(router: Router, services: IServices) {
     const userController = new UserController(services);
 
-    router.post("/new", userController.createUser.bind(userController));
-    router.put("/data", AuthMiddleware.validateToken, userController.updateUserData.bind(userController));
-    router.put("/change-password", AuthMiddleware.validateToken, userController.updatePassword.bind(userController));
+    router.post("/new", catchAsync(userController.createUser.bind(userController)));
+    router.put("/data", catchAsync(AuthMiddleware.validateToken), catchAsync(userController.updateUserData.bind(userController)));
+    router.put("/change-password", catchAsync(AuthMiddleware.validateToken), catchAsync(userController.updatePassword.bind(userController)));
 
     return router;
 }

@@ -11,12 +11,12 @@ class UserController {
 
     constructor(private readonly services: IServices) {}
 
-    async createUser(req: Request, res: Response, next: NextFunction): Promise<void> {
-        
+    async createUser(req: Request, res: Response): Promise<void> {
+
         const userCreator = new UserCreator(this.services.userRepository);
 
         const userDto = req.body;
-        
+
         const validationSchema = yup.object().shape({
             name: yup.string().required("Name is required"),
             email: yup.string().email("Email is invalid").required("Email is required"),
@@ -24,62 +24,50 @@ class UserController {
             photo: yup.string(),
             role: yup.string()
         });
-            
-        try {
-            await HandlerSchemas.validate(validationSchema, userDto);
 
-            const result = await userCreator.execute(userDto);
+        await HandlerSchemas.validate(validationSchema, userDto);
 
-            res.status(201).json({ ok: result });
-        } catch (error) {
-            next(error);
-        }
+        const result = await userCreator.execute(userDto);
+
+        res.status(201).json({ ok: result });
     }
 
-    async updateUserData(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async updateUserData(req: Request, res: Response): Promise<void> {
 
         const userDataUpdater = new UserDataUpdater(this.services.userRepository);
 
         const user = req["user"] as IUser;
         const { name } = req.body;
-        
+
         const validationSchema = yup.object().shape({
             name: yup.string().required(),
         });
-        
-        try {
-            await HandlerSchemas.validate(validationSchema, { name });
 
-            const result = await userDataUpdater.execute(user.email, { name });
+        await HandlerSchemas.validate(validationSchema, { name });
 
-            res.status(200).json({ ok: result });
-        } catch (error) {
-            next(error);
-        }
+        const result = await userDataUpdater.execute(user.email, { name });
+
+        res.status(200).json({ ok: result });
     }
 
-    async updatePassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async updatePassword(req: Request, res: Response): Promise<void> {
 
         const userPasswordUpdater = new UserPasswordUpdater(this.services.userRepository);
 
         const passwordsDTO = req.body;
         const user: IUser = req["user"];
-        
+
         const validationSchema = yup.object().shape({
             password: yup.string().required("Password is required"),
             repeatPassword: yup.string().required("Repeat password is required").oneOf([yup.ref("password"), undefined], "Passwords must match"),
             oldPassword: yup.string().email("Email is invalid").required("Old password is required"),
         });
-        
-        try {
-            await HandlerSchemas.validate(validationSchema, passwordsDTO);
 
-            await userPasswordUpdater.execute(user.email, passwordsDTO);
+        await HandlerSchemas.validate(validationSchema, passwordsDTO);
 
-            res.status(200);
-        } catch (error) {
-            next(error);
-        }
+        await userPasswordUpdater.execute(user.email, passwordsDTO);
+
+        res.status(200);
     }
 }
 

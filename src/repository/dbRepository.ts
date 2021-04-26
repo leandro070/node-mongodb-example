@@ -3,6 +3,7 @@ import {
   IDbRepositoryConnectionOptions,
 } from "./interfaces/iDBRepository";
 import { Connection, createConnection, QueryError } from "mysql";
+import DbError from "../errors/dbError";
 
 export class DbRepository implements IDbRepository {
   private connection: Connection;
@@ -16,7 +17,7 @@ export class DbRepository implements IDbRepository {
     return new Promise((resolve, reject) => {
       this.connection.query(sql, args, (err: QueryError, rows) => {
         if (err) {
-          reject(err);
+          reject(new DbError(err));
 
           return;
         }
@@ -34,7 +35,7 @@ export class DbRepository implements IDbRepository {
     return new Promise((resolve, reject) => {
       this.connection.end((err: QueryError) => {
         if (err) {
-          reject(err);
+          reject(new DbError(err));
 
           return;
         }

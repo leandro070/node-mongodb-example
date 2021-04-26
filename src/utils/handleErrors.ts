@@ -1,22 +1,28 @@
 import { Request, Response } from "express";
 import HTTPError from "../errors/httpError";
 
-export function handleError(err: Error, _: Request, res: Response): Response<unknown> {
+export const catchAsync = (fn) => {
+  return (req, res, next) => {
+    fn(req, res, next).catch((err) => handleError(err, res));
+  };
+};
 
-    if (err instanceof HTTPError) {
-        return res.status(err.getCode()).json({
-            status: "error",
-            message: err.getMessage(),
-            errors: err.getBody(),
-        });
-    }
+export function handleError(
+  err: Error,
+  res: Response
+): Response<unknown> {
 
-    return res.status(500).json({
-        status: "error",
-        message: err.message,
-        error: err.stack
+  if (err instanceof HTTPError) {
+    return res.status(err.getCode()).json({
+      status: "error",
+      message: err.getMessage(),
+      error: err.getBody(),
     });
+  }
 
+  return res.status(500).json({
+    status: "error",
+    message: err.message,
+    error: err.stack,
+  });
 }
-
-
